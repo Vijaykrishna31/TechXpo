@@ -1,0 +1,135 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">Admin Dashboard</h1>
+
+<h2 class="mb-4">Users</h2>
+<div class="table-responsive">
+    <table class="table table-bordered table-striped">
+        <thead>
+            <tr>
+                <th>Username</th>
+                <th>Total Sales</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for username, sales in user_sales.items() %}
+            <tr>
+                <td>{{ username }}</td>
+                <td>${{ sales }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<div class="mb-3">
+    <label for="filter_user" class="form-label">Filter by User:</label>
+    <select id="filter_user" class="form-select" onchange="filterBills(); filterProducts();">
+        <option value="all">All Users</option>
+        {% for user in users %}
+        <option value="{{ user.username }}">{{ user.username }}</option>
+        {% endfor %}
+    </select>
+</div>
+
+<h2 class="mb-4">Bills</h2>
+<div class="table-responsive">
+    <table id="bills_table" class="table table-bordered table-striped">
+        <thead>
+            <tr>
+                <th>Bill No</th>
+                <th>User</th>
+                <!-- <th>Name</th> -->
+                <!-- <th>Class</th> -->
+                <th>Type</th>
+                <th>Product Code</th>
+                <th>Product Name</th>
+                <th>Quantity</th>
+                <th>Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for bill in bills %}
+            <tr data-user-id="{{ bill.user_id }}">
+                <td>{{ bill.bill_no }}</td>
+                <td>{{ bill.user_id }}</td>
+                <!-- <td>{{ bill.name }}</td> -->
+                <!-- <td>{{ bill.class }}</td> -->
+                <td>{{ bill.type }}</td>
+                <td>{{ bill.product_code }}</td>
+                <td>{{ bill.product_name }}</td>
+                <td>{{ bill.quantity }}</td>
+                <td>${{ bill.total }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<h2 class="mb-4">Products</h2>
+<!-- <div class="mb-3">
+    <label for="filter_user" class="form-label">Filter by User:</label>
+    <select id="filter_user" class="form-select" onchange="filterProducts()">
+        <option value="all">All Users</option>
+        {% for user in users %}
+        <option value="{{ user.username }}">{{ user.username }}</option>
+        {% endfor %}
+    </select>
+</div> -->
+<div class="table-responsive">
+    <table id="products_table" class="table table-bordered table-striped">
+        <thead>
+            <tr>
+                <th>User</th>
+                <th>Product No</th>
+                <th>Product Name</th>
+                <th>Product Price</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for product in products %}
+            <tr data-user-id="{{ product.user_id }}">
+                <td>{{ product.user_id }}</td>
+                <td>{{ product.product_no }}</td>
+                <td>{{ product.product_name }}</td>
+                <td>${{ product.product_price }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+<a href="{{ url_for('home') }}" class="btn btn-secondary">Back to Home</a>
+
+<script>
+    function filterBills() {
+        const userId = document.getElementById('filter_user').value;
+        const rows = document.querySelectorAll('#bills_table tbody tr');
+
+        rows.forEach(row => {
+            const rowUserId = row.getAttribute('data-user-id');
+            if (userId === 'all' || rowUserId === userId) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    }
+
+    function filterProducts(){
+        const userId = document.getElementById('filter_user').value;
+        const rows = document.querySelectorAll('#products_table tbody tr');
+
+        rows.forEach(row => {
+            const rowUserId = row.getAttribute('data-user-id');
+            if (userId === 'all' || rowUserId === userId) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    }
+</script>
+{% endblock %}

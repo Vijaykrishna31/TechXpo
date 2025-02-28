@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+{% block title %}Bills{% endblock %}
+{% block content %}
+<div class="container mt-4">
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    {% for category, message in messages %}
+    <div class="alert alert-{{ category }} alert-dismissible fade show"
+        role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"
+            aria-label="Close"></button>
+    </div>
+    {% endfor %}
+    {% endif %}
+    {% endwith %}
+    <h1 class="mb-4">Create Bill</h1>
+    <form method="POST">
+        <div class="mb-3">
+            <label for="payment_method" class="form-label">Payment
+                Method:</label>
+            <select id="payment_method" name="payment_method"
+                class="form-select" required>
+                <option value="Cash">Cash</option>
+                <option value="UPI">UPI</option>
+            </select>
+        </div>
+
+        <h2 class="mt-5 mb-4">Products</h2>
+        <div class="table-responsive">
+            <table class="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <th>Product Code</th>
+                        <th>Product Name</th>
+                        <th>Price</th>
+                        <th>Quantity</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for product in products %}
+                    <tr>
+                        <td>{{ product.product_no }}</td>
+                        <td>{{ product.product_name }}</td>
+                        <td>₹{{ product.product_price }}</td>
+                        <td>
+                            <input type="number"
+                                name="quantity_{{ product.product_no }}"
+                                class="form-control quantity" min="0" value="0"
+                                oninput="calculateTotal('{{ product.product_no }}', {{ product.product_price }})">
+                        </td>
+                        <td>
+                            <span
+                                id="total_{{ product.product_no }}">$0.00</span>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="mb-3">
+            <label for="overall_total" class="form-label">Overall Total:</label>
+            <input type="text" id="overall_total" name="overall_total"
+                class="form-control" readonly>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Submit Bill</button>
+    </form>
+
+    <br>
+    <a href="{{ url_for('home') }}" class="btn btn-secondary">Back to Home</a>
+</div>
+
+<script>
+    function calculateTotal(productNo, price) {
+        const quantity = document.querySelector(`input[name="quantity_${productNo}"]`).value || 0;
+        const total = (price * quantity).toFixed(2);
+        document.getElementById(`total_${productNo}`).innerText = `$${total}`;
+        updateOverallTotal();
+    }
+
+    function updateOverallTotal() {
+        const totals = document.querySelectorAll('[id^="total_"]');
+        let overallTotal = 0;
+        totals.forEach(total => {
+            const value = parseFloat(total.innerText.replace('$', '')) || 0;
+            overallTotal += value;
+        });
+        document.getElementById('overall_total').value = `$${overallTotal.toFixed(2)}`;
+    }
+</script>
+{% endblock %}

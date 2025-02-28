@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+<h1>Welcome, {{ username }}!</h1>
+<a href="{{ url_for('logout') }}" class="btn btn-secondary mb-3">Logout</a>
+
+<!-- Display Total Sales -->
+<div class="alert alert-info">
+    <strong class="text-danger h4">Total Sales: ₹{{ "%.2f"|format(total_sales)
+        }}</strong>
+</div>
+{% if username=="admin" %}
+<h2>Government Arts College (Autonomous), Salem - 7.</h2>
+<section class="py-5 text-center">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h1>TechXpo 2025</h1>
+                <p class="h5"><strong>Date:</strong> 6th March 2025</p>
+                <p class="h5"><strong>Time:</strong> 10:00 AM - 5:00 PM</p>
+                <p class="h5"><strong>Location:</strong> Centenary Building</p>
+                <!-- <p><strong>Description:</strong> Join us for an exciting day filled with music, dance, and art performances. There will be food stalls and games to enjoy throughout the day.</p> -->
+                <!-- <a href="#" class="btn btn-primary">Register Now</a> -->
+            </div>
+        </div>
+    </div>
+</section>
+{% else %}
+<h2>Your Bills</h2>
+<div class="table-responsive">
+    <table class="table table-bordered table-striped">
+        <thead>
+            <tr>
+                <th>Bill No</th>
+                <th>Payment Method</th>
+                <th>Product Code</th>
+                <th>Product Name</th>
+                <th>Quantity</th>
+                <th>Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for bill in bills %}
+            <tr>
+                <td>{{ bill.bill_no }}</td>
+                <td>{{ bill.type }}</td>
+                <td>{{ bill.product_code }}</td>
+                <td>{{ bill.product_name }}</td>
+                <td>{{ bill.quantity }}</td>
+                <td>₹{{ bill.total }}</td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="6" class="text-center">No bills found.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endif %}
+{% endblock %}
