@@ -1,5 +1,4 @@
 flask
 flask-login
-pymongo==4.1.1
+pymongo
 werkzeug
-bson
